@@ -1,4 +1,9 @@
 .vs
+
 Debug
-WordFrequencyAnalyzer
+
+WordFrequencyAnalyzer/Debug
+
+WordFrequencyAnalyzer/WordFrequencyAnalyzer.vcxproj
+WordFrequencyAnalyzer/WordFrequencyAnalyzer.vcxproj.filters
 WordFrequencyAnalyzer.sln
