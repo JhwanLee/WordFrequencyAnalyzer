@@ -10,14 +10,30 @@ std::unordered_set<std::string> stopWords;
 int initializeStopWords();
 
 int main() {
+	initializeStopWords();
 	int choice = -1;
 	std::cout << "WordFrequency Analyzer\n";
-	std::cout << "Select an option to begin:\n";
-	std::cout << "1. Input txt file name for analysis\n";
-	std::cout << "2. Change stop words inclusion settings\n";
-	std::cout << "3. View previous analysis\n";
-	std::cin >> choice;
-
+	while (true) {
+		std::cout << "Select an option:\n";
+		std::cout << "1. Input txt file name for analysis\n";
+		std::cout << "2. Change stop words inclusion settings\n";
+		std::cout << "3. View previous analysis\n";
+		std::cin >> choice;
+		switch (choice) {
+			case 1:
+				//Txt file Analysis
+				break;
+			case 2:
+				//Change stop word settings
+				break;
+			case 3:
+				//View previous analysis
+				break;
+			default:
+				//Invalid Choice
+				break;
+		}
+	}
 
 	return 0;
 }
