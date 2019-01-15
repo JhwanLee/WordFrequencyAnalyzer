@@ -8,12 +8,20 @@
 std::unordered_set<std::string> stopWords;
 
 int initializeStopWords();
+void analyzeText(bool includeStopWords);
 
 int main() {
 	initializeStopWords();
 	int choice = -1;
 	std::cout << "WordFrequency Analyzer\n";
+	bool includeStopWords = false;
 	while (true) {
+		if (includeStopWords) {
+			std::cout << "Current Setting: Include Stop Words\n\n";
+		}
+		else {
+			std::cout << "Current Setting: Don't Include Stop Words\n\n";
+		}
 		std::cout << "Select an option:\n";
 		std::cout << "1. Input txt file name for analysis\n";
 		std::cout << "2. Change stop words inclusion settings\n";
@@ -21,7 +29,7 @@ int main() {
 		std::cin >> choice;
 		switch (choice) {
 			case 1:
-				//Txt file Analysis
+				analyzeText(includeStopWords);
 				break;
 			case 2:
 				//Change stop word settings
@@ -30,7 +38,7 @@ int main() {
 				//View previous analysis
 				break;
 			default:
-				//Invalid Choice
+				std::cout << "Invalid Choice. Please input 1, 2, or 3\n\n";
 				break;
 		}
 	}
@@ -50,4 +58,8 @@ int initializeStopWords() {
 	}
 
 	return 0;
+}
+
+void analyzeText(bool includeStopWords) {
+
 }
