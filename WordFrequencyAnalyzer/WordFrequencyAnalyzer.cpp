@@ -40,7 +40,15 @@ int main() {
 		std::cout << "2. Change stop words inclusion settings\n";
 		std::cout << "3. View previous analysis\n";
 		std::cout << "Enter your choice: ";
-		std::cin >> choice;
+		//I orginally used simple cin stream to get the choice, but if the user doesn't input anything, it had a weird bug of not getting the input for the next loop
+		//I modified my code to use getline with a string varaible to fix this bug
+		std::string choice_str;
+		std::getline(std::cin, choice_str);
+		if (choice_str != "1" && choice_str != "2" && choice_str != "3") {
+			std::cout << "Invalid Choice. Please input 1, 2, or 3\n\n";
+			continue;
+		}
+		choice = std::stoi(choice_str);
 		switch (choice) {
 			case 1:
 				analyzeText(includeStopWords);
@@ -50,7 +58,11 @@ int main() {
 				std::cout << "1. Include Stop Words\n";
 				std::cout << "2. Don't Include StopWords\n";
 				std::cout << "Enter your choice: ";
-				std::cin >> choice;
+				std::getline(std::cin, choice_str);
+				if (choice_str != "1" && choice_str != "2") {
+					std::cout << "Invalid Choice. Please input 1 or 2\n\n";
+					break;
+				}
 				if (choice == 1) {
 					includeStopWords = true;
 				}
@@ -64,9 +76,6 @@ int main() {
 				break;
 			case 3:
 				//View previous analysis
-				break;
-			default:
-				std::cout << "Invalid Choice. Please input 1, 2, or 3\n\n";
 				break;
 		}
 	}
