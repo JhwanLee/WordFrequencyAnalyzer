@@ -15,7 +15,8 @@ std::unordered_set<std::string> commonNouns;
 std::unordered_set<std::string> commonVerbs;
 
 int initializeWordSets();
-void analyzeText(bool includeStopWords);
+void analyzeText(bool includeStopWords, int &newFileNum);
+void browseLog();
 std::string findRootWord(std::string original);
 
 //Defining a custom comparator class to sort the count_map by value
@@ -30,6 +31,7 @@ int main() {
 		return -1;
 	}
 
+	int newFilenum = 0; //New history file number
 	int choice = -1;
 	std::cout << "****************************************\n";
 	std::cout << "\tWord Frequency Analyzer\n";
@@ -68,7 +70,7 @@ int main() {
 		}
 		switch (choice) {
 			case 1:
-				analyzeText(includeStopWords);
+				analyzeText(includeStopWords, newFilenum);
 				break;
 			case 2:
 				std::cout << "\nSelect an option:\n";
@@ -93,7 +95,7 @@ int main() {
 				std::cout << "Setting changed\n\n";
 				break;
 			case 3:
-				//View previous analysis
+				browseLog();
 				break;
 		}
 	}
@@ -142,19 +144,63 @@ int initializeWordSets() {
 	return 0;
 }
 
-void analyzeText(bool includeStopWords) {
+void analyzeText(bool includeStopWords, int &newFileNum) {
 	std::string filename;
 	std::unordered_map<std::string, unsigned int> count_map; //Hash map that counts each root word
 
 	std::cout << "Enter TXT Filename: ";
 	std::cin >> filename;
-	std::cin.ignore();
+	std::cin.ignore(); // Ignore '\n'
 	std::ifstream txtFileStream;
 	txtFileStream.open(filename.c_str());
 	if (!txtFileStream.is_open()) {
 		std::cout << "TXT Filename not found\n\n";
 		return;
 	}
+
+	//Modify log and save the analysis
+	std::ifstream logStream;
+	logStream.open("Data/log.txt");
+	if (!txtFileStream.is_open()) {
+		std::cout << "/Data/log.txt not found\n\n";
+		return;
+	}
+
+	std::ofstream newLogStream;
+	char * oldName = "Data/log_temp.txt"; 
+	char * newName = "Data/log.txt"; //New name
+	newLogStream.open(oldName); //Create a temp log file
+
+	int numRecord;
+	logStream >> numRecord;
+	std::string logTemp;
+	if (numRecord == 10) {
+		newLogStream << 10;
+		newLogStream << '\n';
+		logStream >> logTemp;
+	}
+	else {
+		newLogStream << numRecord + 1;
+		newLogStream << '\n';
+	}
+
+	//Copy the old log to temporary log
+	std::vector<std::string> logEntries;
+	while (logStream >> logTemp) {
+		logEntries.push_back(logTemp);
+	}
+	logEntries.push_back(filename);
+	for (unsigned int i = 0; i < logEntries.size(); i++) {
+		newLogStream << logEntries[i] << '\n';
+	}
+	logStream.close();
+	newLogStream.close();
+	remove("Data/log.txt"); //Remove the old log file
+	rename(oldName, newName); //Rename the log_temp.txt file to log.txt file
+
+
+	std::ofstream newFileStream;
+
 	//Iterate through each word
 	std::string temp = "";
 	while (txtFileStream >> temp) {
@@ -193,7 +239,6 @@ void analyzeText(bool includeStopWords) {
 }
 
 std::string findRootWord(std::string original) {
-	std::cout << original << std::endl;
 	//Convert to lower case (No C++ standard library for to_lower) and remove non-alphabetical characters
 	for (unsigned int i = 0; i < original.size(); i++) {
 		if (original[i] >= 'A' && original[i] <= 'Z') {
@@ -201,6 +246,7 @@ std::string findRootWord(std::string original) {
 		}
 		if (!isalpha(original[i])) {
 			original.erase(i, 1);
+			i--;
 		}
 	}
 
@@ -240,4 +286,8 @@ std::string findRootWord(std::string original) {
 		return original;
 	}
 	return original;
+}
+
+void browseLog() {
+
 }
