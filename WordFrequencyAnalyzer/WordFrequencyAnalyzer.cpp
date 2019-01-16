@@ -17,7 +17,7 @@ std::string findRootWord(std::string original);
 //Defining a custom comparator class to sort the count_map by value
 struct compare {
 	bool operator()(std::pair<std::string, unsigned int> &lhs, std::pair<std::string, unsigned int> &rhs) {
-		return lhs.second < rhs.second;
+		return lhs.second > rhs.second;
 	}
 };
 
@@ -130,7 +130,7 @@ void analyzeText(bool includeStopWords) {
 	}
 	
 	for (int i = 0; i < numberOfEntry; i++) {
-		std::cout << i + 1 << ". " << map_vector[i].first << "\t" << map_vector[i].second << "\n";
+		std::cout << i + 1 << ". " << map_vector[i].first << " " << map_vector[i].second << "\n";
 	}
 	std::cout << "\n";
 	//Save the Analysis and update the log
@@ -138,5 +138,12 @@ void analyzeText(bool includeStopWords) {
 
 std::string findRootWord(std::string original) {
 	//Implement root word extraction algorithm
+
+	//Convert to lower case (No C++ standard library for to_lower)
+	for (unsigned int i = 0; i < original.size(); i++) {
+		if (original[i] >= 'A' && original[i] <= 'Z') {
+			original[i] = original[i] - ('A' - 'a');
+		}
+	}
 	return original;
 }
