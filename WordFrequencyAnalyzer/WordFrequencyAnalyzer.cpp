@@ -29,13 +29,28 @@ int main() {
 		std::cout << "1. Input txt file name for analysis\n";
 		std::cout << "2. Change stop words inclusion settings\n";
 		std::cout << "3. View previous analysis\n";
+		std::cout << "Enter your choice: ";
 		std::cin >> choice;
 		switch (choice) {
 			case 1:
 				analyzeText(includeStopWords);
 				break;
 			case 2:
-				//Change stop word settings
+				std::cout << "\nSelect an option:\n";
+				std::cout << "1. Include Stop Words\n";
+				std::cout << "2. Don't Include StopWords\n";
+				std::cout << "Enter your choice: ";
+				std::cin >> choice;
+				if (choice == 1) {
+					includeStopWords = true;
+				}
+				else if (choice == 2) {
+					includeStopWords = false;
+				}
+				else {
+					break;
+				}
+				std::cout << "Setting changed\n\n";
 				break;
 			case 3:
 				//View previous analysis
