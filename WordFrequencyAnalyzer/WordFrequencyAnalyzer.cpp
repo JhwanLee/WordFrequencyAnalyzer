@@ -7,6 +7,8 @@
 #include <unordered_set>
 #include <algorithm>
 #include <utility>
+#include <ctype.h>
+#include <stdlib.h>
 
 std::unordered_set<std::string> stopWords;
 std::unordered_set<std::string> commonNouns;
@@ -34,6 +36,7 @@ int main() {
 	std::cout << "****************************************\n";
 	bool includeStopWords = false;
 	while (true) {
+		std::cin.clear();
 		if (includeStopWords) {
 			std::cout << "------------------------------------------\n";
 			std::cout << "Current Setting: Include Stop Words\n";
@@ -52,8 +55,9 @@ int main() {
 		std::cout << "Enter your choice: ";
 		//I orginally used simple cin stream to get the choice, but if the user doesn't input anything, it had a weird bug of not getting the input for the next loop
 		//I modified my code to use getline with a string varaible to fix this bug
+		std::cin.clear();
 		std::string choice_str;
-		std::getline(std::cin, choice_str);
+		std::getline(std::cin, choice_str, '\n');
 		if (choice_str != "1" && choice_str != "2" && choice_str != "3" && choice_str != "4") {
 			std::cout << "Invalid Choice. Please input 1, 2, 3, or 4\n\n";
 			continue;
@@ -71,6 +75,7 @@ int main() {
 				std::cout << "1. Include Stop Words\n";
 				std::cout << "2. Don't Include StopWords\n";
 				std::cout << "Enter your choice: ";
+				std::cin.clear();
 				std::getline(std::cin, choice_str);
 				if (choice_str != "1" && choice_str != "2") {
 					std::cout << "Invalid Choice. Please input 1 or 2\n\n";
@@ -143,10 +148,11 @@ void analyzeText(bool includeStopWords) {
 
 	std::cout << "Enter TXT Filename: ";
 	std::cin >> filename;
+	std::cin.ignore();
 	std::ifstream txtFileStream;
 	txtFileStream.open(filename.c_str());
 	if (!txtFileStream.is_open()) {
-		std::cout << "TXT Filename not found\n";
+		std::cout << "TXT Filename not found\n\n";
 		return;
 	}
 	//Iterate through each word
@@ -166,6 +172,7 @@ void analyzeText(bool includeStopWords) {
 			count_map[rootWord]++;
 		}
 	}
+	txtFileStream.close();
 	//Sort by value
 	std::vector<std::pair<std::string, unsigned int>> map_vector;
 	//Copy all the map entry to a vector because C++ does not support sorting of a hashmap by value
@@ -186,10 +193,14 @@ void analyzeText(bool includeStopWords) {
 }
 
 std::string findRootWord(std::string original) {
-	//Convert to lower case (No C++ standard library for to_lower)
+	std::cout << original << std::endl;
+	//Convert to lower case (No C++ standard library for to_lower) and remove non-alphabetical characters
 	for (unsigned int i = 0; i < original.size(); i++) {
 		if (original[i] >= 'A' && original[i] <= 'Z') {
 			original[i] = original[i] - ('A' - 'a');
+		}
+		if (!isalpha(original[i])) {
+			original.erase(i, 1);
 		}
 	}
 
@@ -217,7 +228,7 @@ std::string findRootWord(std::string original) {
 				return rootWord;
 			}
 		}
-		if (original[original.size() - 3] == 'i' && original[original.size() - 2] == 'n' && original.back() == 'g') {
+		if (original.size() >= 3 && original[original.size() - 3] == 'i' && original[original.size() - 2] == 'n' && original.back() == 'g') {
 			rootWord.pop_back(); //delete 'i'
 			rootWord.pop_back(); //delete 'n'
 			rootWord.pop_back(); //delete 'g'
