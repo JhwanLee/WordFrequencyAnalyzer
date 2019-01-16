@@ -30,10 +30,10 @@ int main() {
 	bool includeStopWords = false;
 	while (true) {
 		if (includeStopWords) {
-			std::cout << "Current Setting: Include Stop Words\n\n";
+			std::cout << "Current Setting: Include Stop Words\n";
 		}
 		else {
-			std::cout << "Current Setting: Don't Include Stop Words\n\n";
+			std::cout << "Current Setting: Don't Include Stop Words\n";
 		}
 		std::cout << "Select an option:\n";
 		std::cout << "1. Input txt file name for analysis\n";
@@ -85,7 +85,7 @@ int main() {
 
 int initializeStopWords() {
 	std::ifstream stopWordsStream;
-	stopWordsStream.open("stopWords.txt");
+	stopWordsStream.open("/Data/stopWords.txt");
 	if (!stopWordsStream.is_open()) {
 		return -1;
 	}
