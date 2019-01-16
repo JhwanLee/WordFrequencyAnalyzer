@@ -29,14 +29,20 @@ int main() {
 	}
 
 	int choice = -1;
-	std::cout << "WordFrequency Analyzer\n";
+	std::cout << "****************************************\n";
+	std::cout << "\tWord Frequency Analyzer\n";
+	std::cout << "****************************************\n";
 	bool includeStopWords = false;
 	while (true) {
 		if (includeStopWords) {
+			std::cout << "------------------------------------------\n";
 			std::cout << "Current Setting: Include Stop Words\n";
+			std::cout << "------------------------------------------\n";
 		}
 		else {
+			std::cout << "------------------------------------------\n";
 			std::cout << "Current Setting: Don't Include Stop Words\n";
+			std::cout << "------------------------------------------\n";
 		}
 		std::cout << "Select an option:\n";
 		std::cout << "1. Input txt file name for analysis\n";
