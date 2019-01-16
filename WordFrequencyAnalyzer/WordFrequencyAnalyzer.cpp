@@ -180,13 +180,47 @@ void analyzeText(bool includeStopWords) {
 }
 
 std::string findRootWord(std::string original) {
-	//Implement root word extraction algorithm
-
 	//Convert to lower case (No C++ standard library for to_lower)
 	for (unsigned int i = 0; i < original.size(); i++) {
 		if (original[i] >= 'A' && original[i] <= 'Z') {
 			original[i] = original[i] - ('A' - 'a');
 		}
+	}
+
+	std::string rootWord = original;
+	//'s' case
+	if (commonNouns.find(original) == commonNouns.end()) { //Not a common noun
+		if (original.back() == 's') { //Check if this word might be a plural form of a common noun
+			//If the 's'-removed word is one of the common nouns, return the root word. Else, return the original
+			rootWord.pop_back(); // delete the 's'
+			if (commonNouns.find(rootWord) != commonNouns.end()) { //rootWord is one of the common nouns
+				return rootWord;
+			}
+			if (commonVerbs.find(rootWord) != commonVerbs.end()) {
+				return rootWord;
+			}
+		}
+	}
+
+	//Verb Case
+	if (commonNouns.find(original) == commonNouns.end()) { //Not a common noun
+		if (original[original.size() - 2] == 'e' && original.back() == 'd') { //ends wtih 'ed'
+			rootWord.pop_back(); //delete 'd'
+			rootWord.pop_back(); //delete 'e'
+			if (commonVerbs.find(rootWord) != commonVerbs.end()) {
+				return rootWord;
+			}
+		}
+		if (original[original.size() - 3] == 'i' && original[original.size() - 2] == 'n' && original.back() == 'g') {
+			rootWord.pop_back(); //delete 'i'
+			rootWord.pop_back(); //delete 'n'
+			rootWord.pop_back(); //delete 'g'
+			if (commonVerbs.find(rootWord) != commonVerbs.end()) {
+				return rootWord;
+			}
+		}
+
+		return original;
 	}
 	return original;
 }
