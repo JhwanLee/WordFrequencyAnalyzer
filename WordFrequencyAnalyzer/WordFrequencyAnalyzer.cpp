@@ -118,7 +118,7 @@ int initializeWordSets() {
 
 	//Common Verbs Initialization
 	std::ifstream commonVerbsStream;
-	commonNounsStream.open("Data/commonVerbs.txt");
+	commonVerbsStream.open("Data/commonVerbs.txt");
 	if (!commonVerbsStream.is_open()) {
 		std::cout << "Please make sure that commonVerbs.txt file is present in the Data directory\n";
 		return -1;
