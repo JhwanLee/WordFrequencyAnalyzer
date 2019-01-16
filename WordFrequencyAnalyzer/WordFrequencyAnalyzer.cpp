@@ -93,9 +93,9 @@ int main() {
 int initializeWordSets() {
 	//Stop Words Initialization
 	std::ifstream stopWordsStream;
-	stopWordsStream.open("../Data/stopWords.txt");
+	stopWordsStream.open("Data/stopWords.txt");
 	if (!stopWordsStream.is_open()) {
-		std::cout << "Please make sure that stopWords.txt file is present in the directory\n";
+		std::cout << "Please make sure that stopWords.txt file is present in the Data directory\n";
 		return -1;
 	}
 	std::string temp = "";
@@ -106,7 +106,7 @@ int initializeWordSets() {
 
 	//Common Nouns Initialization
 	std::ifstream commonNounsStream;
-	commonNounsStream.open("../Data/commonNouns.txt");
+	commonNounsStream.open("Data/commonNouns.txt");
 	if (!commonNounsStream.is_open()) {
 		std::cout << "Please make sure that commonNouns.txt file is present in the Data directory\n";
 		return -1;
@@ -118,7 +118,7 @@ int initializeWordSets() {
 
 	//Common Verbs Initialization
 	std::ifstream commonVerbsStream;
-	commonNounsStream.open("../Data/commonVerbs.txt");
+	commonNounsStream.open("Data/commonVerbs.txt");
 	if (!commonVerbsStream.is_open()) {
 		std::cout << "Please make sure that commonVerbs.txt file is present in the Data directory\n";
 		return -1;
