@@ -3,13 +3,23 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <unordered_set>
+#include <algorithm>
+#include <utility>
 
 std::unordered_set<std::string> stopWords;
 
 int initializeStopWords();
 void analyzeText(bool includeStopWords);
 std::string findRootWord(std::string original);
+
+//Defining a custom comparator class to sort the count_map by value
+struct compare {
+	bool operator()(std::pair<std::string, unsigned int> &lhs, std::pair<std::string, unsigned int> &rhs) {
+		return lhs.second < rhs.second;
+	}
+};
 
 int main() {
 	if (initializeStopWords() == -1) {
@@ -81,6 +91,7 @@ int initializeStopWords() {
 void analyzeText(bool includeStopWords) {
 	std::string filename;
 	std::unordered_map<std::string, unsigned int> count_map; //Hash map that counts each root word
+
 	std::cout << "Enter TXT Filename: ";
 	std::cin >> filename;
 	std::ifstream txtFileStream;
@@ -89,6 +100,7 @@ void analyzeText(bool includeStopWords) {
 		std::cout << "TXT Filename not found\n";
 		return;
 	}
+	//Iterate through each word
 	std::string temp = "";
 	while (txtFileStream >> temp) {
 		if (!includeStopWords) {
@@ -105,13 +117,26 @@ void analyzeText(bool includeStopWords) {
 			count_map[rootWord]++;
 		}
 	}
-	
 	//Sort by value
+	std::vector<std::pair<std::string, unsigned int>> map_vector;
+	//Copy all the map entry to a vector because C++ does not support sorting of a hashmap by value
+	std::copy(count_map.begin(), count_map.end(), std::back_inserter<std::vector<std::pair<std::string, unsigned int>>>(map_vector));
+	std::sort(map_vector.begin(), map_vector.end(), compare());
 	//Print out top 25
+	std::cout << "Word Frequency Analysis Result\n";
+	int numberOfEntry = 25;
+	if (map_vector.size() < 25) {
+		numberOfEntry = map_vector.size();
+	}
+	
+	for (int i = 0; i < numberOfEntry; i++) {
+		std::cout << i + 1 << ". " << map_vector[i].first << "\t" << map_vector[i].second << "\n";
+	}
+	std::cout << "\n";
 	//Save the Analysis and update the log
 }
 
 std::string findRootWord(std::string original) {
 	//Implement root word extraction algorithm
-	return "";
+	return original;
 }
