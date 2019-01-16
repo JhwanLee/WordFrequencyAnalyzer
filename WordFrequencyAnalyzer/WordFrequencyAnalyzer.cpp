@@ -9,8 +9,10 @@
 #include <utility>
 
 std::unordered_set<std::string> stopWords;
+std::unordered_set<std::string> commonNouns;
+std::unordered_set<std::string> commonVerbs;
 
-int initializeStopWords();
+int initializeWordSets();
 void analyzeText(bool includeStopWords);
 std::string findRootWord(std::string original);
 
@@ -22,9 +24,10 @@ struct compare {
 };
 
 int main() {
-	if (initializeStopWords() == -1) {
-		std::cout << "Please make sure that stopWords.txt file is present in the directory\n";
+	if (initializeWordSets() == -1) {
+		return -1;
 	}
+
 	int choice = -1;
 	std::cout << "WordFrequency Analyzer\n";
 	bool includeStopWords = false;
@@ -39,16 +42,20 @@ int main() {
 		std::cout << "1. Input txt file name for analysis\n";
 		std::cout << "2. Change stop words inclusion settings\n";
 		std::cout << "3. View previous analysis\n";
+		std::cout << "4. Quit Program\n";
 		std::cout << "Enter your choice: ";
 		//I orginally used simple cin stream to get the choice, but if the user doesn't input anything, it had a weird bug of not getting the input for the next loop
 		//I modified my code to use getline with a string varaible to fix this bug
 		std::string choice_str;
 		std::getline(std::cin, choice_str);
-		if (choice_str != "1" && choice_str != "2" && choice_str != "3") {
-			std::cout << "Invalid Choice. Please input 1, 2, or 3\n\n";
+		if (choice_str != "1" && choice_str != "2" && choice_str != "3" && choice_str != "4") {
+			std::cout << "Invalid Choice. Please input 1, 2, 3, or 4\n\n";
 			continue;
 		}
 		choice = std::stoi(choice_str);
+		if (choice == 4) {
+			break;
+		}
 		switch (choice) {
 			case 1:
 				analyzeText(includeStopWords);
@@ -83,16 +90,43 @@ int main() {
 	return 0;
 }
 
-int initializeStopWords() {
+int initializeWordSets() {
+	//Stop Words Initialization
 	std::ifstream stopWordsStream;
-	stopWordsStream.open("/Data/stopWords.txt");
+	stopWordsStream.open("../Data/stopWords.txt");
 	if (!stopWordsStream.is_open()) {
+		std::cout << "Please make sure that stopWords.txt file is present in the directory\n";
 		return -1;
 	}
 	std::string temp = "";
 	while (stopWordsStream >> temp) {
 		stopWords.insert(temp);
 	}
+	stopWordsStream.close();
+
+	//Common Nouns Initialization
+	std::ifstream commonNounsStream;
+	commonNounsStream.open("../Data/commonNouns.txt");
+	if (!commonNounsStream.is_open()) {
+		std::cout << "Please make sure that commonNouns.txt file is present in the Data directory\n";
+		return -1;
+	}
+	while (commonNounsStream >> temp) {
+		commonNouns.insert(temp);
+	}
+	commonNounsStream.close();
+
+	//Common Verbs Initialization
+	std::ifstream commonVerbsStream;
+	commonNounsStream.open("../Data/commonVerbs.txt");
+	if (!commonVerbsStream.is_open()) {
+		std::cout << "Please make sure that commonVerbs.txt file is present in the Data directory\n";
+		return -1;
+	}
+	while (commonVerbsStream >> temp) {
+		commonVerbs.insert(temp);
+	}
+	commonVerbsStream.close();
 
 	return 0;
 }
