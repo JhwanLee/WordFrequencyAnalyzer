@@ -322,6 +322,10 @@ void browseLog() {
 	logStream >> newFileID;
 	logStream >> numEntries;
 	
+	if (numEntries == 0) {
+		std::cout << "No previous analyses to browse\n\n";
+		return;
+	}
 	std::string filename;
 	std::vector<std::string> filenames;
 	while (std::getline(logStream, filename)) {
