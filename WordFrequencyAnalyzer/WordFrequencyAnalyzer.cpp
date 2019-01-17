@@ -9,7 +9,6 @@
 #include <utility>
 #include <ctype.h>
 #include <stdlib.h>
-#include <filesystem>
 
 std::unordered_set<std::string> stopWords;
 std::unordered_set<std::string> commonNouns;
