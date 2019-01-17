@@ -9,8 +9,8 @@ The most recent 10 analysis are stored, and the user can view the original text,
 
 ## File Structure
 The permanent resource files are stored under Data folder. 'log.txt' file stores the current fileID, number of stored analyses, and name of the input .txt file of each stored analysis.
-'record_text_FILEID_FILENAME' stores the copy of the input .txt file.
-'record_result_FILEID_FILENAME' stores the stop words inclusion settings as well as the analysis result.
+**record_text_*FILEID*_*FILENAME*** stores the copy of the input .txt file.
+**record_result_*FILEID*_*FILENAME*** stores the stop words inclusion settings as well as the analysis result.
 
 ## Usage
 To start an analysis, place the .txt file inside the working directory. Type in the option number to navigate around the program.
@@ -21,11 +21,11 @@ Type in Staring ID '\n' 0 '\n' to initialize the log.txt file.
 
 ## Compiling
 Use the makefile in the repo, or use
-'g++ -std=c++17 WordFrequencyAnalyzer.cpp -o'
+**g++ -std=c++17 WordFrequencyAnalyzer.cpp -o**
 
 ## TODO
-1. Implement FILE_ID flush. When the file_id goes over the limit of unsigned int, reset the file_id to 0 and update the current history accordingly.
-2. Implement a better stemming algorithm to account for commonly used irregular verbs or other edge cases
+ - [ ] Implement FILE_ID flush. When the file_id goes over the limit of unsigned int, reset the file_id to 0 and update the current history accordingly.
+ - [ ] Implement a better stemming algorithm to account for commonly used irregular verbs or other edge cases
 
 
 ## Resources
