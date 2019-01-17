@@ -9,13 +9,14 @@
 #include <utility>
 #include <ctype.h>
 #include <stdlib.h>
+#include <filesystem>
 
 std::unordered_set<std::string> stopWords;
 std::unordered_set<std::string> commonNouns;
 std::unordered_set<std::string> commonVerbs;
 
 int initializeWordSets();
-void analyzeText(bool includeStopWords, int &newFileNum);
+void analyzeText(bool includeStopWords);
 void browseLog();
 std::string findRootWord(std::string original);
 
@@ -31,7 +32,6 @@ int main() {
 		return -1;
 	}
 
-	int newFilenum = 0; //New history file number
 	int choice = -1;
 	std::cout << "****************************************\n";
 	std::cout << "\tWord Frequency Analyzer\n";
@@ -70,7 +70,7 @@ int main() {
 		}
 		switch (choice) {
 			case 1:
-				analyzeText(includeStopWords, newFilenum);
+				analyzeText(includeStopWords);
 				break;
 			case 2:
 				std::cout << "\nSelect an option:\n";
@@ -144,7 +144,7 @@ int initializeWordSets() {
 	return 0;
 }
 
-void analyzeText(bool includeStopWords, int &newFileNum) {
+void analyzeText(bool includeStopWords) {
 	std::string filename;
 	std::unordered_map<std::string, unsigned int> count_map; //Hash map that counts each root word
 
@@ -161,15 +161,20 @@ void analyzeText(bool includeStopWords, int &newFileNum) {
 	//Modify log and save the analysis
 	std::ifstream logStream;
 	logStream.open("Data/log.txt");
-	if (!txtFileStream.is_open()) {
+	if (!logStream.is_open()) {
 		std::cout << "/Data/log.txt not found\n\n";
 		return;
 	}
 
 	std::ofstream newLogStream;
-	char * oldName = "Data/log_temp.txt"; 
-	char * newName = "Data/log.txt"; //New name
+	const char * oldName = "Data/log_temp.txt"; 
+	const char * newName = "Data/log.txt"; //New name
 	newLogStream.open(oldName); //Create a temp log file
+
+	unsigned int newFileID; // 
+	logStream >> newFileID;
+	newFileID++; //Increment new file number
+	newLogStream << newFileID << '\n';
 
 	int numRecord;
 	logStream >> numRecord;
@@ -178,6 +183,10 @@ void analyzeText(bool includeStopWords, int &newFileNum) {
 		newLogStream << 10;
 		newLogStream << '\n';
 		logStream >> logTemp;
+		std::string deleteTextName = "Data/record_text_" + std::to_string(newFileID - 10) + "_" + logTemp;
+		std::string deleteResultName = "Data/record_result_" + std::to_string(newFileID - 10) + "_" + logTemp;
+		remove(deleteTextName.c_str());
+		remove(deleteResultName.c_str());
 	}
 	else {
 		newLogStream << numRecord + 1;
@@ -198,8 +207,17 @@ void analyzeText(bool includeStopWords, int &newFileNum) {
 	remove("Data/log.txt"); //Remove the old log file
 	rename(oldName, newName); //Rename the log_temp.txt file to log.txt file
 
-
+	std::string newTextCopyName = "Data/record_text_" + std::to_string(newFileID) + "_" + filename;
+	std::string contentCopyTemp;
+	std::ifstream contentCopyStream;
+	contentCopyStream.open(filename.c_str());
 	std::ofstream newFileStream;
+	newFileStream.open(newTextCopyName.c_str());
+	while (getline(contentCopyStream, contentCopyTemp)) {
+		newFileStream << contentCopyTemp << '\n';
+	}
+	newFileStream.close();
+	contentCopyStream.close();
 
 	//Iterate through each word
 	std::string temp = "";
@@ -230,10 +248,14 @@ void analyzeText(bool includeStopWords, int &newFileNum) {
 	if (map_vector.size() < 25) {
 		numberOfEntry = map_vector.size();
 	}
-	
+	std::string newResultName = "Data/record_result_" + std::to_string(newFileID) + "_" + filename;
+	newFileStream.open(newResultName.c_str());
+	newFileStream << includeStopWords << '\n';
 	for (int i = 0; i < numberOfEntry; i++) {
 		std::cout << i + 1 << ". " << map_vector[i].first << " " << map_vector[i].second << "\n";
+		newFileStream << i + 1 << ". " << map_vector[i].first << " " << map_vector[i].second << "\n";
 	}
+	newFileStream.close();
 	std::cout << "\n";
 	//Save the Analysis and update the log
 }
@@ -267,7 +289,7 @@ std::string findRootWord(std::string original) {
 
 	//Verb Case
 	if (commonNouns.find(original) == commonNouns.end()) { //Not a common noun
-		if (original[original.size() - 2] == 'e' && original.back() == 'd') { //ends wtih 'ed'
+		if (original.size() >= 2 && original[original.size() - 2] == 'e' && original.back() == 'd') { //ends wtih 'ed'
 			rootWord.pop_back(); //delete 'd'
 			rootWord.pop_back(); //delete 'e'
 			if (commonVerbs.find(rootWord) != commonVerbs.end()) {
@@ -289,5 +311,78 @@ std::string findRootWord(std::string original) {
 }
 
 void browseLog() {
+	std::ifstream logStream;
+	logStream.open("Data/log.txt");
+	if (!logStream.is_open()) {
+		std::cout << "/Data/log.txt not found\n\n";
+		return;
+	}
+	
+	unsigned int newFileID;
+	int numEntries;
+	logStream >> newFileID;
+	logStream >> numEntries;
+	
+	std::string filename;
+	std::vector<std::string> filenames;
+	while (std::getline(logStream, filename)) {
+		filenames.push_back(filename);
+	}
+	logStream.close();
+	std::reverse(filenames.begin(), filenames.end()); //Reverse the order to display the most recent analysis first
+	filenames.pop_back(); //Delete Extra new line at the end
+	std::cout << "Select a previous Analysis (Most recent first):\n";
 
+	for (unsigned int i = 0; i < filenames.size(); i++) {
+		std::cout << i + 1 << ". " << filenames[i] << '\n';
+	}
+	int choice;
+	std::cin >> choice;
+	std::cin.ignore();
+	if (choice > filenames.size()) {
+		std::cout << "Invalid Choice\n\n";
+		return;
+	}
+
+	std::string textFileName = "Data/record_text_" + std::to_string(newFileID - (choice - 1)) + "_" + filenames[choice - 1];
+	std::string resultFileName = "Data/record_result_" + std::to_string(newFileID - (choice - 1)) + "_" + filenames[choice - 1];
+
+	std::ifstream textFileStream;
+	textFileStream.open(textFileName.c_str());
+
+	std::ifstream resultFileStream;
+	resultFileStream.open(resultFileName.c_str());
+
+	//Display Setting
+	resultFileStream >> choice;
+	if (choice == 1) {
+		std::cout << "--------------------------------------------\n";
+		std::cout << "\nStop Word Setting: Include Stop Words\n\n";
+		std::cout << "--------------------------------------------\n";
+	}
+	else {
+		std::cout << "--------------------------------------------\n";
+		std::cout << "\nStop Word Setting: Don't Include Stop Words\n\n";
+		std::cout << "--------------------------------------------\n";
+	}
+	//Display Original Text
+	std::string displayBuffer;
+	std::cout << "\n--------------------------------------------\n";
+	std::cout << "Original Text Input:\n";
+	std::cout << "--------------------------------------------\n";
+	while (std::getline(textFileStream, displayBuffer)) {
+		std::cout << displayBuffer << "\n";
+	}
+
+	//Display Analysis Result
+	std::cout << "\n--------------------------------------------\n";
+	std::cout << "Analysis Result: \n";
+	std::cout << "--------------------------------------------\n";
+	std::getline(resultFileStream, displayBuffer); //To get rid of the '\n' after getting the setting
+	while (std::getline(resultFileStream, displayBuffer)) {
+		std::cout << displayBuffer << "\n";
+	}
+	std::cout << "\n";
+	textFileStream.close();
+	resultFileStream.close();
 }

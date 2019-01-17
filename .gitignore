@@ -1,7 +1,6 @@
 .vs
-
 Debug
-
+WordFrequencyAnalyzer/Data/record*
 WordFrequencyAnalyzer/Debug
 WordFrequencyAnalyzer/WordFrequencyAnalyzer
 WordFrequencyAnalyzer/WordFrequencyAnalyzer.ilk
